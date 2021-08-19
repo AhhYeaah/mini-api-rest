@@ -1,7 +1,7 @@
 GET http://localhost:3000 HTTP/1.1
 
 ###
-GET http://localhost:3000?id=1 HTTP/1.1
+GET http://localhost:3000?email=emaila HTTP/1.1
 
 
 ###
@@ -9,7 +9,8 @@ POST http://localhost:3000 HTTP/1.1
 content-Type: application/json
 
 {
-    "message": "hello"
+    "email": "emaila",
+    "senha": "senha"
 }
 ###
 PUT http://localhost:3000?id=1 HTTP/1.1
