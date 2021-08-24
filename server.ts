@@ -4,10 +4,6 @@ import cors from 'cors'
 
 app.use(cors());
 
-<<<<<<< HEAD
-=======
-
->>>>>>> a6fa8dd54f2ef17396ccb2efe898a9a778c415a1
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -28,7 +24,6 @@ app.get('/', (req, res)=>{
 
     let objectsInContext = objectsInMemory.filter(
         (obj)=>{
-<<<<<<< HEAD
 
             let paramNames = Object.keys(req.query)
         
@@ -43,31 +38,6 @@ app.get('/', (req, res)=>{
         }
     )
     objectsInContext.length > 0 ? res.send(objectsInContext) : res.status(404).send("Not found") 
-=======
-            let validParams : Array<boolean> = []
-
-            const filterObjectsByParams = ()=>{
-                Object.keys(req.query).forEach(parameters => {
-                    if(parameters in obj.data){
-                        let isObjectPropertyEqualToQueryParams : boolean = obj.data[parameters] == req.query[parameters]      
-                        validParams.push(isObjectPropertyEqualToQueryParams)
-                    }else{
-                        validParams.push(false)
-                    }
-                });
-            }
-            filterObjectsByParams()
-
-            let isAllParamsValid : boolean = validParams.every(x => x)
-            if (isAllParamsValid){
-                return obj
-            }
-        }
-    )
-    res.send(objectsInContext)      
-
-    
->>>>>>> a6fa8dd54f2ef17396ccb2efe898a9a778c415a1
 })
 
 app.post('/', (req, res)=>{
@@ -104,13 +74,8 @@ app.put('/', (req, res)=>{
         res.status(404).send()
     }
     res.send(UpdateObj)
-<<<<<<< HEAD
 })
 
-=======
-    
-})
->>>>>>> a6fa8dd54f2ef17396ccb2efe898a9a778c415a1
 app.delete('/', (req, res)=>{
     let objExists = info.indexOf(info.find(obj => obj["metaData"].id == req.query.id))
     if(objExists === -1){
@@ -121,13 +86,5 @@ app.delete('/', (req, res)=>{
     }
 })
 
-<<<<<<< HEAD
 app.listen(3000 || process.env.port);
 console.log("🌮 Throw some chapolle in there and where set! 🌮")
-=======
-app.listen(3000);
-console.log("Throw some chapolle in there and where set!")
-
->>>>>>> a6fa8dd54f2ef17396ccb2efe898a9a778c415a1
-
-
