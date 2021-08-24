@@ -1,7 +1,11 @@
 GET http://localhost:3000 HTTP/1.1
 
 ###
+<<<<<<< HEAD
 GET http://localhost:3000?email=email HTTP/1.1
+=======
+GET http://localhost:3000?email=emaila HTTP/1.1
+>>>>>>> a6fa8dd54f2ef17396ccb2efe898a9a778c415a1
 
 
 ###
