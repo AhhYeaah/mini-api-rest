@@ -1,90 +1,89 @@
-import express from 'express'
-const app = express()
-import cors from 'cors'
+import express from "express";
+import cors from "cors";
+import { databaseObjects } from "./src/interfaces";
 
+const app = express();
 app.use(cors());
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const info : Array<any> = []
-let id = 0
+// """database"""
+const database: databaseObjects[] = [];
+let id = 0;
 
-app.get('/', (req, res)=>{
-    // Se a consulta get for feita sem parametros trará todo o conteudo do array database
-    // Caso tenha filtrará os objetos
-    
-    let hasParams : boolean = Object.keys(req.query).length > 0
-    let objectsInMemory = info
+app.get("/", (req, res) => {
+  const queryParams = Object.keys(req.query);
 
-    if(!hasParams){
-        res.send(objectsInMemory)
-        return
-    }
+  let hasParams = queryParams.length > 0;
+  if (!hasParams) {
+    res.send(database);
+    return;
+  }
 
-    let objectsInContext = objectsInMemory.filter(
-        (obj)=>{
+  const objectsInContext = database.filter((obj) => {
+    let isTheSearchedObject = queryParams.every((param) => {
+      //paran exists? if exists, is it the same as the query
+      return param in obj.data && obj.data[param] == req.query[param];
+    });
 
-            let paramNames = Object.keys(req.query)
-        
-            let isTheSearchedObject = paramNames.every(
-                (param)=>{
-                    //paran exists? if exists, is it the same as the query
-                    return param in obj.data && obj.data[param] == req.query[param]
-                }
-            )
+    if (isTheSearchedObject) return obj;
+  });
+  objectsInContext.length > 0
+    ? res.send(objectsInContext)
+    : res.status(404).send("Not found");
+});
 
-           if(isTheSearchedObject) return obj 
-        }
-    )
-    objectsInContext.length > 0 ? res.send(objectsInContext) : res.status(404).send("Not found") 
-})
+app.post("/", (req, res) => {
+  //Create an object
+  let newObj: databaseObjects = {
+    data: req.body,
+    metaData: {
+      id: id,
+      time: new Date(Date.now()).toUTCString(),
+      lastUpdate: null,
+    },
+  };
 
-app.post('/', (req, res)=>{
-    //Create an object
+  database.push(newObj);
+  res.status(200).send(newObj);
 
-    let date = new Date(Date.now())
+  id++;
+});
 
-    let newObj = { ...{
-        metaData:{
-            "id": id,
-            "time": date.toUTCString(),
-            "lastUpdate": null
-        }
-    }, ...{
-        "data":req.body
-        } 
-    }
+app.put("/", ({ query: { id: wantedId }, body }, res) => {
+  if (!wantedId) {
+    res.status(400).send();
+    return;
+  }
 
-    info.push(newObj)
+  //Update a object by id
+  let objToBeUpdated = database.find(
+    ({ metaData: { id } }) => id == Number(wantedId)
+  );
+  if (objToBeUpdated === undefined) {
+    res.status(404).send();
+    return;
+  }
 
-    res.send(newObj).status(200)
-    id++
-})
+  objToBeUpdated.data = body;
+  objToBeUpdated.metaData.lastUpdate = new Date(Date.now()).toISOString();
 
-app.put('/', (req, res)=>{
-    //Update a object by id
+  res.send(objToBeUpdated);
+});
 
-    let UpdateObj = info.find(obj => obj["metaData"].id == req.query.id)
-    
-    if(UpdateObj !== undefined){
-        UpdateObj.data = req.body
-        UpdateObj.metaData.lastUpdate = new Date(Date.now()).toISOString()
-    }else{
-        res.status(404).send()
-    }
-    res.send(UpdateObj)
-})
+app.delete("/", (req, res) => {
+  let searchedObjIndex = database.findIndex(
+    ({ metaData: { id } }) => id == Number(req.query.id)
+  );
 
-app.delete('/', (req, res)=>{
-    let objExists = info.indexOf(info.find(obj => obj["metaData"].id == req.query.id))
-    if(objExists === -1){
-        res.status(404).send("Not found")
-    }else{
-        info.splice(objExists, 1)
-        res.send("Done")
-    }
-})
+  if (searchedObjIndex === -1) {
+    res.status(404).send("Not found");
+  } else {
+    database.splice(searchedObjIndex, 1);
+    res.status(200).send();
+  }
+});
 
 app.listen(3000 || process.env.port);
-console.log("🌮 Throw some chapolle in there and where set! 🌮")
+console.log("🌮 Throw some chapolle in there and where set! 🌮");

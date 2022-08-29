@@ -1,11 +1,7 @@
 GET http://localhost:3000 HTTP/1.1
 
 ###
-<<<<<<< HEAD
-GET http://localhost:3000?email=email HTTP/1.1
-=======
 GET http://localhost:3000?email=emaila HTTP/1.1
->>>>>>> a6fa8dd54f2ef17396ccb2efe898a9a778c415a1
 
 
 ###
@@ -17,12 +13,12 @@ content-Type: application/json
     "senha": "senha"
 }
 ###
-PUT http://localhost:3000?id=1 HTTP/1.1
+PUT http://localhost:3000?id=0 HTTP/1.1
 content-Type: application/json
 
 {
-    "message": "Mensagem mudada3"
+    "email": "email"
 }
 ### 
-DELETE http://localhost:3000?id=2 HTTP/1.1
+DELETE http://localhost:3000?id=0 HTTP/1.1
 content-Type: application/json
